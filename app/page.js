@@ -450,138 +450,132 @@ export default function Home() {
       )}
 
 {step === 9 && (
-  <div className="max-w-2xl">
-    <h2 className="text-2xl font-bold mb-6">Your Personalized Recommendation</h2>
-    <div className="bg-white p-6 rounded-lg shadow-lg">
-      {(() => {
-        console.log('Current values:', {
-          waterSource: waterSource.category,
-          tdsValue: parseInt(tdsValue),
-          sourceChangeFrequency,
-          movingFrequency,
-          consistentTaste,
-          tdsPreference,
-          preferredTDSRange
-        });
+        <div className="max-w-2xl">
+          <h2 className="text-2xl font-bold mb-6">Your Personalized Recommendation</h2>
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            {(() => {
+              // Decision Matrix Logic
+              if (waterSource.category === 'Corporation' && 
+                  (!tdsValue || parseInt(tdsValue) < 250) && 
+                  sourceChangeFrequency === 'Never' &&
+                  !['Once a year', 'Multiple times a year'].includes(movingFrequency)) {
+                return (
+                  <div>
+                    <h3 className="text-xl font-semibold text-blue-600 mb-4">UV Water Purifier</h3>
+                    <p className="mb-4">Based on your inputs:</p>
+                    <ul className="list-disc ml-5 space-y-2 mb-4">
+                      <li>You have corporation water with low TDS</li>
+                      <li>Your water source rarely changes</li>
+                      <li>You don't move frequently</li>
+                    </ul>
+                    <p>A UV purifier is perfect for your needs as it will effectively disinfect your water while preserving essential minerals.</p>
+                  </div>
+                );
+              }
 
-        // Decision Matrix Logic
-        if (waterSource.category === 'Corporation' && 
-            (!tdsValue || parseInt(tdsValue) < 250) && 
-            sourceChangeFrequency === 'Never' &&
-            !['Once a year', 'Multiple times a year'].includes(movingFrequency)) {
-          return (
-            <div>
-              <h3 className="text-xl font-semibold text-blue-600 mb-4">UV Water Purifier</h3>
-              <p className="mb-4">Based on your inputs:</p>
-              <ul className="list-disc ml-5 space-y-2 mb-4">
-                <li>You have corporation water with low TDS</li>
-                <li>Your water source rarely changes</li>
-                <li>You don't move frequently</li>
-              </ul>
-              <p>A UV purifier is perfect for your needs as it will effectively disinfect your water while preserving essential minerals.</p>
+              if (tdsValue && parseInt(tdsValue) > 1500 && 
+                  !['Once a year', 'Multiple times a year'].includes(movingFrequency)) {
+                return (
+                  <div>
+                    <h3 className="text-xl font-semibold text-blue-600 mb-4">High-Recovery RO (Atomberg Purifier)</h3>
+                    <p className="mb-4">Based on your inputs:</p>
+                    <ul className="list-disc ml-5 space-y-2 mb-4">
+                      <li>Your water has high TDS (above 1500 ppm)</li>
+                      <li>You don't move frequently</li>
+                    </ul>
+                    <p>A high-recovery RO system is recommended to effectively reduce TDS while minimizing water wastage.</p>
+                  </div>
+                );
+              }
+
+              if (['Once a quarter', 'Once a month', 'Every couple of days'].includes(sourceChangeFrequency)) {
+                return (
+                  <div>
+                    <h3 className="text-xl font-semibold text-blue-600 mb-4">Atomberg Smart Water Purifier with Intelligent Bypass</h3>
+                    <p className="mb-4">Based on your inputs:</p>
+                    <ul className="list-disc ml-5 space-y-2 mb-4">
+                      <li>Your water source changes frequently</li>
+                      <li>This requires adaptive purification</li>
+                    </ul>
+                    <p>The intelligent bypass mode will automatically adjust purification based on input water quality.</p>
+                  </div>
+                );
+              }
+
+              if (['Once a year', 'Multiple times a year'].includes(movingFrequency) && consistentTaste) {
+                return (
+                  <div>
+                    <h3 className="text-xl font-semibold text-blue-600 mb-4">Atomberg Smart Water Purifier with Consistent TDS</h3>
+                    <p className="mb-4">Based on your inputs:</p>
+                    <ul className="list-disc ml-5 space-y-2 mb-4">
+                      <li>You move frequently</li>
+                      <li>You prefer consistent water taste</li>
+                    </ul>
+                    <p>This system maintains consistent water quality regardless of location changes.</p>
+                  </div>
+                );
+              }
+
+              if (tdsPreference && preferredTDSRange) {
+                return (
+                  <div>
+                    <h3 className="text-xl font-semibold text-blue-600 mb-4">Atomberg Smart Water Purifier with Taste Customization</h3>
+                    <p className="mb-4">Based on your inputs:</p>
+                    <ul className="list-disc ml-5 space-y-2 mb-4">
+                      <li>You have specific TDS preferences: {preferredTDSRange}</li>
+                    </ul>
+                    <p>This system allows you to customize water taste by maintaining your preferred TDS level.</p>
+                  </div>
+                );
+              }
+
+              // Default recommendation
+              return (
+                <div>
+                  <h3 className="text-xl font-semibold text-blue-600 mb-4">Standard RO Water Purifier</h3>
+                  <p className="mb-4">Based on your inputs:</p>
+                  <ul className="list-disc ml-5 space-y-2 mb-4">
+                    <li>Standard water purification needs</li>
+                    {tdsValue && <li>TDS Value: {tdsValue} ppm</li>}
+                    {waterSource.category && <li>Water Source: {waterSource.category}</li>}
+                  </ul>
+                  <p>A standard RO purifier will effectively treat your water and provide safe drinking water.</p>
+                </div>
+              );
+            })()}
+
+            <div className="mt-6 space-y-4">
+              <button 
+                onClick={() => {
+                  setStep(1);
+                  // Reset all states
+                  setPincode('');
+                  setKnowsSource(null);
+                  setWaterSource({ category: '', specificSource: '' });
+                  setKnowsTDS(null);
+                  setTdsValue('');
+                  setSourceChangeFrequency('');
+                  setAdvanceNotice(null);
+                  setTdsPreference(null);
+                  setPreferredTDSRange('');
+                  setMovingFrequency('');
+                  setConsistentTaste(null);
+                }}
+                className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Start New Assessment
+              </button>
+              <button 
+                onClick={handleBackClick}
+                className="text-gray-600 hover:text-gray-800"
+              >
+                ← Back
+              </button>
             </div>
-          );
-        }
-
-        if (tdsValue && parseInt(tdsValue) > 1500 && 
-            !['Once a year', 'Multiple times a year'].includes(movingFrequency)) {
-          return (
-            <div>
-              <h3 className="text-xl font-semibold text-blue-600 mb-4">High-Recovery RO (Atomberg Purifier)</h3>
-              <p className="mb-4">Based on your inputs:</p>
-              <ul className="list-disc ml-5 space-y-2 mb-4">
-                <li>Your water has high TDS (above 1500 ppm)</li>
-                <li>You don't move frequently</li>
-              </ul>
-              <p>A high-recovery RO system is recommended to effectively reduce TDS while minimizing water wastage.</p>
-            </div>
-          );
-        }
-
-        if (['Once a quarter', 'Once a month', 'Every couple of days'].includes(sourceChangeFrequency)) {
-          return (
-            <div>
-              <h3 className="text-xl font-semibold text-blue-600 mb-4">Atomberg Smart Water Purifier with Intelligent Bypass</h3>
-              <p className="mb-4">Based on your inputs:</p>
-              <ul className="list-disc ml-5 space-y-2 mb-4">
-                <li>Your water source changes frequently</li>
-                <li>This requires adaptive purification</li>
-              </ul>
-              <p>The intelligent bypass mode will automatically adjust purification based on input water quality.</p>
-            </div>
-          );
-        }
-
-        if (['Once a year', 'Multiple times a year'].includes(movingFrequency) && consistentTaste) {
-          return (
-            <div>
-              <h3 className="text-xl font-semibold text-blue-600 mb-4">Atomberg Smart Water Purifier with Consistent TDS</h3>
-              <p className="mb-4">Based on your inputs:</p>
-              <ul className="list-disc ml-5 space-y-2 mb-4">
-                <li>You move frequently</li>
-                <li>You prefer consistent water taste</li>
-              </ul>
-              <p>This system maintains consistent water quality regardless of location changes.</p>
-            </div>
-          );
-        }
-
-        if (tdsPreference && preferredTDSRange) {
-          return (
-            <div>
-              <h3 className="text-xl font-semibold text-blue-600 mb-4">Atomberg Smart Water Purifier with Taste Customization</h3>
-              <p className="mb-4">Based on your inputs:</p>
-              <ul className="list-disc ml-5 space-y-2 mb-4">
-                <li>You have specific TDS preferences: {preferredTDSRange}</li>
-              </ul>
-              <p>This system allows you to customize water taste by maintaining your preferred TDS level.</p>
-            </div>
-          );
-        }
-
-        // Default recommendation
-        return (
-          <div>
-            <h3 className="text-xl font-semibold text-blue-600 mb-4">Standard RO Water Purifier</h3>
-            <p className="mb-4">Based on your inputs:</p>
-            <ul className="list-disc ml-5 space-y-2 mb-4">
-              <li>Standard water purification needs</li>
-              {tdsValue && <li>TDS Value: {tdsValue} ppm</li>}
-              {waterSource.category && <li>Water Source: {waterSource.category}</li>}
-            </ul>
-            <p>A standard RO purifier will effectively treat your water and provide safe drinking water.</p>
           </div>
-        );
-      })()}
+        </div>
+      )}
+    </main>
+  );
+}
 
-      <div className="mt-6 space-y-4">
-        <button 
-          onClick={() => {
-            setStep(1);
-            // Reset all states
-            setPincode('');
-            setKnowsSource(null);
-            setWaterSource({ category: '', specificSource: '' });
-            setKnowsTDS(null);
-            setTdsValue('');
-            setSourceChangeFrequency('');
-            setAdvanceNotice(null);
-            setTdsPreference(null);
-            setPreferredTDSRange('');
-            setMovingFrequency('');
-            setConsistentTaste(null);
-          }}
-          className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Start New Assessment
-        </button>
-        <button 
-          onClick={handleBackClick}
-          className="text-gray-600 hover:text-gray-800"
-        >
-          ← Back
-        </button>
-      </div>
-    </div>
-  </div>
-)}
